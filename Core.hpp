@@ -21,17 +21,17 @@ private:
     //TODO: what is degradation?
     int degradation;
     std::vector<T>* values;
-    template<class U> U reduceRecc(U (*func)(U, T), U, int);
+    std::vector<T>* getValues();
     template<typename R> friend std::ostream& operator<<(std::ostream&, const Core<R>*);
     template<typename R> friend std::vector<Core<R>*> initializeVector();
-
+    friend MapReduce<T> *MapReduce<T>::map(bool (*func)(T &));
 
 public:
-    void set(const std::vector<T>&);
+    void set(std::vector<T>*);
     static int getCount();
     int getId() const;
     int getDegradation() const;
-    Core<int> & map(bool (*func)(T&));
+    Core<T> & map(bool (*func)(T&));
     template<class U> U reduce(U (*func)(U, T), U);
 };
 

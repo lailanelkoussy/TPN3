@@ -28,6 +28,7 @@ Core<T> *MapReduce<T>::chooseCore() {
         if (cores[i]->getDegradation() < corePoint->getDegradation())
             corePoint = cores[i];
     }
+    corePoint->set(values);
     return corePoint;
 }
 
@@ -49,6 +50,7 @@ MapReduce<T> *MapReduce<T>::map(bool (*func)(T &)) {
     core = chooseCore();
     core->set(values);
     core->map(func);
+    values = core->getValues();
     return this;
 }
 

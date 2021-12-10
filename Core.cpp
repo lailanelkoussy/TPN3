@@ -6,10 +6,15 @@ template<typename T>
 int Core<T>::count = 0;
 
 template<typename T>
-Core<int> &Core<T>::map(bool (*func)(T &)) {
+Core<T> &Core<T>::map(bool (*func)(T &)) {
+    degradation++;
+    vector<T>* newValues = new vector<T>;
     for (unsigned long i = 0; i < values->size(); i++) {
-        func(values->at(i));
+        if(func(values->at(i))){
+            newValues->push_back(values->at(i));
+        }
     }
+    values = newValues;
     return *this;
 }
 
@@ -29,7 +34,7 @@ template<typename R>
 ostream &operator<<(ostream &out, const Core<R> *core) {
     out << "Core id: " << core->id << endl;
     out << "Core degradation: " << core->degradation << endl;
-    if (core->values == nullptr)
+    if (core->values == nullptr || core->degradation == 0)
         return out;
 
     out << "List of elements in core: " << endl;
@@ -41,26 +46,19 @@ ostream &operator<<(ostream &out, const Core<R> *core) {
 }
 
 template<typename T>
-void Core<T>::set(const vector<T> &collection) {
-    values->clear();
-    for (unsigned long i = 0; i < collection.size(); i++)
-        values->push_back(collection[i]);
+void Core<T>::set(vector<T> *collection) {
+ values = collection;
 }
 
 template<typename T>
 template<class U>
 U Core<T>::reduce(U (*func)(U, T), U u) {
-    return reduceRecc(func, u, 0);
-}
-
-template<typename T>
-template<class U>
-U Core<T>::reduceRecc(U (*func)(U, T), U u, int i) {
-
-    if (i == values->size() - 1)
-        return func(u, values->at(i));
-    else
-        return reduceRecc(func, func(u, values->at(i)), i++);
+    degradation++;
+    U result = func(u, values->at(0));
+    for(int i = 1; i<values->size(); i++){
+         result = func(result, values->at(i));
+    }
+    return result;
 
 
 }
@@ -73,6 +71,11 @@ int Core<T>::getDegradation() const {
 template<typename T>
 int Core<T>::getId() const {
     return id;
+}
+
+template<typename T>
+vector<T> *Core<T>::getValues() {
+    return values;
 }
 
 

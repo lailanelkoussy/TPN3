@@ -13,6 +13,8 @@ private:
     static std::vector<Core<T>*> cores;
     Core<T>* core;
 
+
+
 public:
     MapReduce(std::vector<T>*);
     Core<T>* chooseCore();

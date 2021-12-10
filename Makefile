@@ -1,20 +1,27 @@
 CPP=g++ --std=c++11
+CFLAGS= -Wall -MD
 
-CFLAGS= -Wall
+all : projet
 
-all : mr
+OBJS =  main.o MapReduce.o Core.o
 
-mr : main.o Core.o MapReduce.o
+projet : main.o MapReduce.o Core.o
 	$(CPP) $(CFLAGS) -o $@ $^
 
 main.o : main.cpp
 	$(CPP) $(CFLAGS) -c $<
 
-MapReduce.o : MapReduce.cpp MapReduce.hpp 
+MapReduce.o : MapReduce.cpp MapReduce.hpp
 	$(CPP) $(CFLAGS) -c $<
+
 Core.o : Core.cpp Core.hpp
 	$(CPP) $(CFLAGS) -c $<
+
 clean :
 	rm *.o
+	rm -f *.d
+
 test: all
-	./mr
+	./projet
+
+-include $(OBJS:.o=.d)
